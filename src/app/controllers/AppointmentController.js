@@ -1,9 +1,17 @@
 import * as Yup from 'yup';
 import { startOfHour, parseISO, isBefore } from 'date-fns';
-import Appointment from '../models/Appointments';
+import Appointment from '../models/Appointment';
 import User from '../models/User';
 
 class AppointmentController {
+  // eslint-disable-next-line class-methods-use-this
+  async index(req, res) {
+    const appointments = await Appointment.findAll({
+      where: { user_id: req.userId, canceled_at: null }
+    });
+    return res.json(appointments);
+  }
+
   // eslint-disable-next-line class-methods-use-this
   async store(req, res) {
     const schema = Yup.object().shape({
@@ -52,7 +60,7 @@ class AppointmentController {
     }
 
     const appointment = await Appointment.create({
-      user_id: req.user_id,
+      user_id: req.userId,
       provider_id,
       date
     });
